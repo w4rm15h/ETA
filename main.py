@@ -15,6 +15,7 @@ import termcolor
 from termcolor import colored
 import configFiles.gameconfig
 from configFiles.gameconfig import *
+from levels.level1 import *
 
 #Creating User
 def creatingUser():
@@ -148,7 +149,8 @@ def printingInventory(playerName):
 
 def theHub(playerName):
     menuStart()
-    playerLoad(playerName)
+    with open("save/{0}.abyss".format(playerName), 'rb') as loading:
+        playerInvDict = pickle.load(loading)
 
     print(colored("{0}".format(playerInvDict["playername"]), 'green').center(93, " "))
     print()
