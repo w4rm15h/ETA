@@ -1,0 +1,45 @@
+player stats, 
+Small chance to earn more than one stat point. 5 in 100 chance.
+adding one stat point on every level increase.
+...
+BRB, i want to make a keylogger,
+I will return when i am not as bored of the same project. 
+
+
+THINGS TO DO. 
+
+1. Make sure the cell level and all the functions are working correctly
+2. Have a look into audio to play music if player wants. 
+3. Add weapon function
+4. Add armor function
+5. Make a YES OR NO FUNCTION for global use. 
+6. Finish hub options. 
+7. battle function << or at least start it. 
+8. Make sure everything is saving/loading correctly. // Fixed
+9. Rewrite the inv function, have a seperate loop.
+
+remove cell key after use in jail cell << After testing 
+
+try print on same line using
+
+sys.stdout.write('\r'+b) >> moves curser up one line. 
+Maybe try it out on a new project first before you start fucking things up!!!!!!
+
+
+#Print centre
+def print_centre(s):
+    print(s.center(shutil.get_terminal_size().columns))
+
+
+    #Making Dicrectory for save files
+def makingDirect(userName):
+    try:
+        path = ("/login{0}".format(userName))
+        os.mkdir(path)
+    except OSError:
+        print(colored("Failed to make {0}".format(userName), 'red').center(93, " "))
+    else:
+        print(colored("Directory {0} successful".format(userName), 'green').center(93, " "))
+
+
+    "playerphrase": "", >> new field to enter key
