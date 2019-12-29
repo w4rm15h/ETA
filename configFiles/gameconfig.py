@@ -6,8 +6,7 @@ import signal
 import termcolor
 from termcolor import *
 import pickle
-from gameconfig import *
-from descriptions import *
+from configFiles.descriptions import *
 
 #Class to store variables for player
 class CMC():
