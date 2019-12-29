@@ -3,6 +3,7 @@
 #online word based game
 #!/bin/bash
 
+#Imports
 import os
 import os.path
 import signal
@@ -11,10 +12,12 @@ import time
 import pickle
 import random
 import shutil
+import getpass 
 import termcolor
 from termcolor import colored
 import configFiles.gameconfig
 from configFiles.gameconfig import *
+from configFiles.descriptions import *
 from levels.level1 import *
 
 #Creating User
@@ -32,7 +35,6 @@ def creatingUser():
         print(colored("a little more... creative!", 'green').center(93, " "))
         time.sleep(2)
         creatingUser()
-
     else:
         print(colored("Are you happy with '{0}'".format(makeAccount), 'green').center(93, " "))
         nameConfirm = input(colored("                                     >", 'green'))
@@ -57,7 +59,6 @@ def passwordSetup(makeAccount):
         passwordSetup()
     else:
         CMC.passHolder = passwordSetup1
-        print(CMC.passHolder)
         creatingUserProfile(makeAccount)
         
 def creatingUserProfile(name):
@@ -67,125 +68,129 @@ def creatingUserProfile(name):
     playerInvDict["playerphrase"] = CMC.passHolder
     with open("save/{0}.abyss".format(name), 'wb') as save1:
         pickle.dump(playerInvDict, save1)
+    print()
+    loadingScreen()
+    print()
     print(colored("*Player Account Created*", 'green').center(93, " "))
+    print()
+    time.sleep(1)
     print(colored("*Time to login and play*", 'green').center(93, " "))
-    print(colored("*...*", 'green').center(93, " "))
     time.sleep(2)
     loginPage()
 
 #Login Page
 def loginPage():
     menuStart()
-    print(colored("Player Login", 'green').center(93, " "))
+    print(colored("1. Login         ", 'green').center(93, " "))
     print()
-    print(colored("-----=-----", 'green').center(93, ' '))
+    print(colored("2. Create Account", 'green').center(93, " "))
+    print()
+    print(colored("3. Help          ", 'green').center(93, " "))
+    print()
+    print(colored("---------=---------", 'green').center(93, ' '))
     print(colored("User Name", 'green').center(93, " "))
-    
-    #Creating User Name
-    userName = input(colored("                                     >", 'green'))
+    loginCtn()
 
-    #Trying Something Different
+def loginCtn():
+    userName = input(colored("                                     > ", 'green'))
+
+    if userName == "help" or userName == "3":
+        menuStart()
+        print(colored(helpText, 'green'))
+        backToPage = input(colored(" Press enter to return to login", 'green').center(93, " " ))
+        if backToPage == "":
+            loginPage()
+        else:
+            loginPage()
+
+    if userName == "create" or userName == "create account" or userName == "2":
+        creatingUser()
+
     if os.path.isfile("save/{0}.abyss".format(userName)) != True:
         print()
-        print(colored("*{0}*' not found".format(userName), 'red').center(93, " "))
-        print()
-        print(colored("Create a new account?", 'green').center(93, " "))
-        userName = input(colored("                                     >", 'green'))
-        if userName == "y":
-            creatingUser()
-        else:
-            loginPage()
+        print(colored("*{0}* not found".format(userName), 'red').center(93, " "))
+        errorFunctionLogin()
+        loginCtn()
+      
     else:
-        with open("save/{0}.abyss".format(userName), 'rb') as open1:
-            playerInvDict = pickle.load(open1)
-        validPassword = playerInvDict["playerphrase"]
-        print(validPassword)
-        print(colored("Password", 'green').center(93, " "))
-        userPassword = input(colored("                                     >", 'green'))
-        #Validating the user password
-        if userPassword == validPassword:
-            if playerInvDict["playernew"] == True:
-                playerInvDict["playernew"] = False
-                playerSave(userName)
-                introduction(userName)
-            else:
-                theHub(userName)
+        passwordInputFunction(userName)
+
+def passwordInputFunction(userName):
+    with open("save/{0}.abyss".format(userName), 'rb') as open1:
+        playerInvDict = pickle.load(open1)
+    print()
+    validPassword = playerInvDict["playerphrase"]
+    print(colored("Password", 'green').center(93, " "))
+    sys.stdout.write("\033[K") #clear line
+    userPassword = input(colored("                                     > ", 'green'))
+
+    #Validating the user password
+    if userPassword == validPassword:
+        if playerInvDict["playernew"] == True:
+            playerInvDict["playernew"] = False
+            with open("save/{0}.abyss".format(userName), 'wb') as update:
+                pickle.dump(playerInvDict, update)
+            introduction(userName)
         else:
-            print(colored("Incorrect Password", 'green').center(93, " "))
-            loginPage()
-               
-#PRINGTING PLAYER INV____________________________________
+            CMC.name = userName
+            theHub(userName)
+    else:
+        print()
+        print(colored("*Incorrect Password*", 'red').center(93, " "))
+        errorFunctionPassword()
+        passwordInputFunction(userName)
 
-def printingInventory(playerName):
-    with open("save/{0}.abyss".format(playerName), 'rb') as save1:
-        playerInvDict = pickle.load(save1)
-
-    item1 = playerInvDict["1. "] 
-    item2 = playerInvDict["2. "]
-    item3 = playerInvDict["3. "]
-    item4 = playerInvDict["4. "]
-    item5 = playerInvDict["5. "]
-    item6 = playerInvDict["6. "]
-    item7 = playerInvDict["7. "]
-    item8 = playerInvDict["8. "]
-    item9 = playerInvDict["9. "]
-    item10 = playerInvDict["10. "]
-
-    print()
-    print(colored("Inventory", 'green').center(93, ' '))
-    print()
-    print(colored(item1, 'green').center(93, " "))
-    print(colored(item2, 'green').center(93, " "))
-    print(colored(item3, 'green').center(93, " "))
-    print(colored(item4, 'green').center(93, " "))
-    print(colored(item5, 'green').center(93, " "))
-    print(colored(item6, 'green').center(93, " "))
-    print(colored(item7, 'green').center(93, " "))
-    print(colored(item8, 'green').center(93, " "))
-    print(colored(item9, 'green').center(93, " "))
-    print(colored(item10, 'green').center(93, " "))
-
-#PRINTING THE HUB_________________________________________
-
+#PRINTING THE HUB
 def theHub(playerName):
     menuStart()
     with open("save/{0}.abyss".format(playerName), 'rb') as loading:
         playerInvDict = pickle.load(loading)
+    CMC.name = playerName
+    weaponName = (playerInvDict["playerweapon"]["weaponName"])
+    armorName = (playerInvDict["playerarmor"]["armorName"])
+    weaponAttack = (playerInvDict["playerweapon"]["weaponAttack"])
+    armorDefence = (playerInvDict["playerarmor"]["armorDefence"])
+    weaponColour = (playerInvDict["playerweapon"]["weaponColour"])
+    armorColour = (playerInvDict["playerarmor"]["armorColour"])
+    playerHealth = playerInvDict["playerhealth"]
+    playerAttack = playerInvDict["playerattack"]
+    playerDefence = playerInvDict["playerdefence"]
+    playerProgress = playerInvDict["playerprogress"]
+    playerDeaths = playerInvDict["playerdeaths"]
+    playerAttackTotal = (playerAttack + weaponAttack)
+    playerDefenceTotal = (playerDefence + armorDefence)
+    weaponPrint = (colored(weaponName, '{0}'.format(weaponColour)).center(93, " "))
+    armorPrint = (colored(armorName, '{0}'.format(armorColour)).center(93, " "))
 
-    print(colored("{0}".format(playerInvDict["playername"]), 'green').center(93, " "))
+    print(colored("{0}".format(playerName), 'green').center(93, " "))
     print()
     print(colored(topBanner, 'green').center(93, " "))
     print()
+    print(weaponPrint)
+    print(colored("Damage: {0}".format(weaponAttack), "green").center(93, " "))
     print()
-    print(colored("Equipped Weapon:", 'green').center(93, " "))
-    print(colored("{0}".format(playerInvDict["playerweapon"]), 'green').center(93, " "))
-    print()
-    print(colored("Equipped Armor:", 'green').center(93, " "))
-    print(colored(playerInvDict["playerarmor"], 'green').center(93, " "))
-    print()
-    print(colored(topBanner, 'green').center(93, " "))
-    print()
-    print(colored("Health: {0}".format(playerInvDict["playerhealth"]), 'green').center(93, " "))
-    print(colored("Attack: {0}".format(playerInvDict["playerattack"]), 'green').center(93, " "))
-    print(colored("Defence: {0}".format(playerInvDict["playerdefence"]), 'green').center(93, " "))
-
+    print(armorPrint)
+    print(colored("Defence: {0}".format(armorDefence), "green").center(93, " "))
     print()
     print(colored(topBanner, 'green').center(93, " "))
     print()
-    print(colored("Progress: {0}".format(playerInvDict["playerprogress"]), 'green').center(93, " "))
-    print(colored("Deaths: {0}".format(playerInvDict["playerdeaths"]), 'green').center(92, " "))
+    print(colored("Health: {0}".format(playerHealth), 'green').center(92, " "))
+    print(colored("Attack: {0}".format(playerAttackTotal), 'green').center(92, " "))
+    print(colored("Defence: {0}".format(playerDefenceTotal), 'green').center(90, " "))
+    print(colored("Progress: {0}".format(playerProgress), 'green').center(92, " "))
+    print(colored("Deaths: {0}".format(playerDeaths), 'green').center(90, " "))
     print()
     print(colored(topBanner, 'green').center(93, " "))
-    printingInventory(playerName)
+    printingInventory()
     print()
     print(colored("---------=---------", 'green').center(93, ' '))
+    print(colored("Type 'start' to begin your adventure.", 'green').center(93, ' '))
     hubInput()
 
 def hubInput():
     hubChoice = input(colored("                                        > ", 'green'))
 
     while hubChoice in hubChoices:
-
         if hubChoice == "start":
             cell()
     else:
@@ -201,14 +206,14 @@ def introduction(playerName):
     print(colored('"look who we have here?"', 'green').center(93, " "))
     print()
     print(colored("---=---", 'green').center(93, ' '))
-    time.sleep(5)
+    time.sleep(2)
 
     menuStart()
     print(colored('"Lost... pity."', 'green').center(93, " "))
     print(colored('"Wondering where?"', 'green').center(93, " "))
     print()
     print(colored("---=---", 'green').center(93, ' '))
-    time.sleep(5)
+    time.sleep(2)
 
     menuStart()
     print(colored('"I guess i could tell you"', 'green').center(93, " "))
@@ -216,39 +221,43 @@ def introduction(playerName):
     print(colored('"Lets just say..."', 'green').center(93, " "))
     print()
     print(colored("---=---", 'green').center(93, ' '))
-    time.sleep(5)
+    time.sleep(2)
 
     menuStart()
     print(colored('"Deep into the abyss!"', 'green').center(93, " "))
     print()
     print(colored("---=---", 'green').center(93, ' '))
-    time.sleep(5)
+    time.sleep(2)
 
     menuStart()
     print(colored('"Will you find your way out?"', 'green').center(93, " "))
     print()
     print(colored("---=---", 'green').center(93, ' '))
-    time.sleep(3)
+    time.sleep(2)
 
     menuStart()
     print(colored('"OR"', 'green').center(93, " "))
     print()
     print(colored("---=---", 'green').center(93, ' '))
-    time.sleep(1)
+    time.sleep(2)
 
     menuStart()
     print(colored('"Will you get lost,', 'green').center(93, " "))
     print(colored('in the dark?"', 'green').center(93, " "))
     print()
     print(colored("---=---", 'green').center(93, ' '))
-    time.sleep(5)
+    time.sleep(2)
 
     menuStart()
     print(colored('"Are you ready?"', 'green').center(93, " "))
     print(colored("Press enter to start.", 'green').center(93, " "))
     print()
     print(colored("---=---", 'green').center(93, ' '))
-
+    with open("save/{0}.abyss".format(playerName), 'rb') as update:
+        playerInvDict = pickle.load(update)
+    playerInvDict["playernew"] = False
+    with open("save/{0}.abyss".format(playerName), 'wb') as addUpdate:
+        pickle.dump(playerInvDict, addUpdate)
     process = input()
     if process == " ":
         theHub(playerName)
@@ -259,7 +268,6 @@ def introduction(playerName):
 
 def helpMenu():
     menuStart()
-
     print(colored("H E L P", 'green').center(93, ' '))
     print()
     time.sleep(0.4)
@@ -272,14 +280,11 @@ def helpMenu():
         mainMenu()
 
     else:
-        
         print(colored("Not a valid input, seriously come on dude.", 'green').center(93, " "))
         time.sleep(1)
         helpMenu()
 
-
 #RUNNING FUNCTIONS_________________________________________
 loginPage()
-signal.signal(signal.SIGINT, signal_handler)
 
 
