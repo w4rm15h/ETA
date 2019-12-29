@@ -1,5 +1,5 @@
-# ESCAPE THE ABYSS
-# LEVEL 1
+#ESCAPE THE ABYSS
+#LEVEL 1
 import random
 import time
 import os
@@ -12,25 +12,16 @@ from configFiles.gameconfig import *
 import configFiles.descriptions
 from configFiles.descriptions import * 
 
-#CLEAR SCREEN FUNCTION_____________________________________
-def menuStart():
-    os.system("clear")
-    print(colored(title, 'green'))
-    time.sleep(0.2)
-    print(colored("---------=---------", 'green').center(93, ' '))
-    print()
-
-#CELL OPTIONS______________________________________________
+#Cell inputs
 def cellFunction():
-
+    CMC.level = 1
     CMC.choiceMaker = False
     UserInputFunction()
     CMC.choiceMaker = True
-    
     if CMC.choiceMaker == True:
-
         if CMC.word == "gonorth" and CMC.cellDoor == "locked":
             print(colored(cellNorth, 'green'))
+            CMC.text = cellNorth
             print(colored("---=---", 'green').center(93, ' '))
             cellFunction()
 
@@ -72,7 +63,7 @@ def cellFunction():
         
         if CMC.word == "takekey":
             invItem = "Cell Key"
-            addingInv(invItem)
+            addingplayerInvDict(invItem)
             print(colored("---=---", 'green').center(93, ' '))
             cellFunction()
 
@@ -89,7 +80,6 @@ def cellFunction():
                 level1()
 
         else:
-
             print(colored("Now is not the time for that!", 'green').center(93, " "))
             print()
             print(colored("---=---", 'green').center(93, ' '))
@@ -100,7 +90,7 @@ def cellFunction():
         time.sleep(3)
         UserInputFunction()
 
-#LEVEL 1 FUNCTION________________________________________
+#Level 1 function
 def level1Function():
 
     CMC.choiceMaker = False
@@ -110,25 +100,25 @@ def level1Function():
     if CMC.choiceMaker == True:
         None
 
-#CELL DESCRIPTION________________________________________
+#Cell description
 def cell():
     menuStart()
-
+    areaUpdate(cellParagraph)
+    CMC.level = 1
     print(colored(cellParagraph, 'green'))
     print()
     print(colored("---=---", 'green').center(93, ' '))
     cellFunction()
 
-#LEVEL 1 DESCRIPTION____________________________________
+#Level 1 description
 def level1():
     menuStart()
-
     print(colored(level1Hallway1, 'green'))
     print()
     print(colored("---=---", 'green').center(93, ' '))
     level1Function()
 
-#LEVEL 1 INTRO TEXT______________________________________
+#Level 1 intro text
 def level1intro():
     menuStart()
 
